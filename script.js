@@ -1,6 +1,6 @@
 var findMe = $("#search-input");
 var status = $("#search-results");
-var API_KEY = "675f38ddab3b5842e555b4006a7973c1";
+var API_KEY = "6c5a83c39d9d9c705a7b2181dc3c4962";
 var searchForm = $("#search-form");
 var cityArr = [];
 
@@ -9,7 +9,7 @@ searchForm.on("submit", function (event) {
   event.preventDefault()
   var city = $("#search-input").val()
   console.log("Search for city! " + city)
-
+  //for current weather
   var queryUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=imperial&appid=" + API_KEY;
   console.log(queryUrl)
 
@@ -19,6 +19,8 @@ searchForm.on("submit", function (event) {
   })
     .then(function (weatherRes) {
       console.log(weatherRes);
+      var coordinates = weatherRes.coord
+      console.log(coordinates)
      /*  $("#search-form").text(JSON.strongify(weatherRes)) */;
       $(".City").text(weatherRes.name);
       $(".Temperature").text(weatherRes.main.temp);
@@ -37,10 +39,27 @@ searchForm.on("submit", function (event) {
           .attr("weather-data", city)
           .appendTo("#user-input");
       });
+      getUvIndex(coordinates)
     });
-
-
+  
+    
 })
+
+
+function getUvIndex(coordinateObject) {
+  var queryUrl ="http://api.openweathermap.org/data/2.5/uvi?lat=" + coordinateObject.lat + "&lon=" + coordinateObject.lon + "&appid=" + API_KEY;
+  console.log(queryUrl)
+  $.ajax({
+    url: queryUrl,
+    method: "GET"
+  }) 
+  .then(function (uvRes) {
+    console.log(uvRes);
+    $(".uv_index").text(uvRes.value);
+  });
+}
+//for uv index
+
 
 
 findMe.onclick = function () {
